@@ -561,8 +561,14 @@ Java引用类型:
 
 
 **View与View Group分类。自定义View过程：onMeasure()、onLayout()、onDraw()。**
-
-如何自定义控件：
+Android的UI界面都是由View和ViewGroup及其派生类组合而成的。
+　　其中，View是所有UI组件的基类，而 ViewGroup是容纳这些组件的容器，其本身也是从View派生出来的.
+　　View对象是Android平台中用户界面体现的基础单位。
+　　View类是它称为“widgets(工具)”的子类的基础，它们提供了诸如文本输入框和按钮之类的UI对象的完整实现。
+　　ViewGroup类同样为其被称为“Layouts(布局)”的子类奠定了基础，它们提供了象流式布局、表格布局以及相对布局之类的布局架构。
+　　一般来说，开发Android应用程序的UI界面都不会直接使用View和ViewGroup，而是使用这两大基类的派生类。
+  
+如何自定义控件
 
 1. 自定义属性的声明和获取
     * 分析需要的自定义属性
@@ -576,8 +582,12 @@ Java引用类型:
 6. onInterceptTouchEvent(ViewGroup)
 7. 状态的恢复与保存
 
+View类一般用于绘图操作，重写它的onDraw方法，但它不可以包含其他组件，没有addView(View view)方法。
+ViewGroup是一个组件容器，它可以包含任何组件，但必须重写onLayout(boolean changed,int l,int t,int r,int b)和onMesure(int widthMesureSpec,int heightMesureSpec)方法. 否则ViewGroup中添加组件是不会显示的。
+http://www.ixueyi.com/jingyan/1846454.html
 
 **Android长连接，怎么处理心跳机制。**
+http://blog.csdn.net/sunmenggmail/article/details/12008075
 
 ---
 
@@ -599,7 +609,7 @@ glide
 
 ---
 
-**Android5.0、6.0新特性。**
+**Android5.0、6.0、7.0新特性。**
 
 Android5.0新特性：
 
@@ -625,9 +635,9 @@ Android7.0新特性
 
 **Context区别**
 
-* Activity和Service以及Application的Context是不一样的,Activity继承自ContextThemeWraper.其他的继承自ContextWrapper
+* Activity和Service以及Application的Context是不一样的,`Activity继承自ContextThemeWraper.其他的继承自ContextWrapper`
 * 每一个Activity和Service以及Application的Context都是一个新的ContextImpl对象
-* getApplication()用来获取Application实例的，但是这个方法只有在Activity和Service中才能调用的到。那么也许在绝大多数情况下我们都是在Activity或者Service中使用Application的，但是如果在一些其它的场景，比如BroadcastReceiver中也想获得Application的实例，这时就可以借助getApplicationContext()方法，getApplicationContext()比getApplication()方法的作用域会更广一些，任何一个Context的实例，只要调用getApplicationContext()方法都可以拿到我们的Application对象。
+* getApplication()用来获取Application实例的，但是这个方法`只有在Activity和Service中才能调用的到`。那么也许在绝大多数情况下我们都是在Activity或者Service中使用Application的，但是如果在一些其它的场景，比如BroadcastReceiver中也想获得Application的实例，这时就可以借助getApplicationContext()方法，getApplicationContext()比getApplication()方法的作用域会更广一些，任何一个Context的实例，只要调用getApplicationContext()方法都可以拿到我们的Application对象。
 * Activity在创建的时候会new一个ContextImpl对象并在attach方法中关联它，Application和Service也差不多。ContextWrapper的方法内部都是转调ContextImpl的方法
 * 创建对话框传入Application的Context是不可以的
 * 尽管Application、Activity、Service都有自己的ContextImpl，并且每个ContextImpl都有自己的mResources成员，但是由于它们的mResources成员都来自于唯一的ResourcesManager实例，所以它们看似不同的mResources其实都指向的是同一块内存
@@ -637,14 +647,22 @@ Android7.0新特性
 
 **IntentService的使用场景与特点。**
 
->IntentService是Service的子类，是一个异步的，会自动停止的服务，很好解决了传统的Service中处理完耗时操作忘记停止并销毁Service的问题
+>IntentService是Service的子类，是一个*异步*的，会*自动停止*的服务，很好解决了传统的Service中处理完耗时操作忘记停止并销毁Service的问题
 
 优点：
 
 * 一方面不需要自己去new Thread
 * 另一方面不需要考虑在什么时候关闭该Service
 
-onStartCommand中回调了onStart，onStart中通过mServiceHandler发送消息到该handler的handleMessage中去。最后handleMessage中回调onHandleIntent(intent)。
+onStartCommand中回调了onStart，onStart中通过mServiceHandler发送消息到该handler的handleMessage中去。最后handleMessage中回调onHandleIntent(intent)。onHandleIntent(Intent)是抽象函数，由子类实现。
+
+哪里体现了不用手动创建工作子线程？
+在onCreate里：
+  HandlerThread thread = new HandlerThread("IntentService[" + mName + "]");
+  thread.start();
+  mServiceLooper = thread.getLooper();
+  mServiceHandler = new ServiceHandler(mServiceLooper);
+
 
 ---
 
