@@ -2,8 +2,8 @@
 ---
 ###APP启动过程
 
-1. Launcher线程捕获onclick的点击事件，调用Launcher.startActivitySafely，进一步调用Launcher.startActivity，最后调用父类Activity的startActivity。
-2. Activity和ActivityManagerService交互，引入Instrumentation，将启动请求交给Instrumentation，调用Instrumentation.execStartActivity
+1. Launcher线程捕获onClick的点击事件(createShortcut方法注册点击事件），调用Launcher.`startActivitySafely`，进一步调用Launcher.`startActivity`，最后调用父类Activity的startActivity。
+2. Activity和ActivityManagerService交互，引入Instrumentation，将启动请求交给Instrumentation，调用Instrumentation.`execStartActivity`
 3. 
 
 ###Android内核解读-应用的安装过程
@@ -12,7 +12,7 @@
 apk的安装过程分为两步：
 
 1. 将apk文件复制到程序目录下(/data/app/)
-2. 为应用创建数据目录(/data/data/package name/)、提取dex文件到指定目录(/data/delvik-cache/)、修改系统包管理信息。
+2. 为应用创建数据目录(/data/data/packageName/)、提取dex文件到指定目录(/data/delvik-cache/)、修改系统包管理信息。（libs呢？）
 
 
 ###View的事件体系

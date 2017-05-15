@@ -11,7 +11,8 @@ interface ICalcAIDL
     int min(int x , int y );  
 } 
 ```
-
+ 生成继承自android.os.IInterface的接口，有个继承android.os.Binder并实现这个接口的抽象子类Stub
+ 
 build一下gen目录下会生成ICalcAIDL.java文件
 
 ```

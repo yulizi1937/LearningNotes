@@ -3,12 +3,12 @@
 
 ###一些基本的概念
 
-* ActivityManagerServices，简称AMS，服务端对象，负责系统中所有Activity的生命周期
-* ActivityThread，App的真正入口。当开启App之后，会调用main()开始运行，开启消息循环队列，这就是传说中的UI线程或者叫主线程。与ActivityManagerServices配合，一起完成Activity的管理工作
+* ActivityManagerServices，简称AMS，服务端对象，负责系统中所有Activity的`生命周期`
+* ActivityThread，App的真正入口。当开启App之后，会调用main()开始运行，开启消息循环队列，这就是传说中的`UI线程`或者叫主线程。与ActivityManagerServices配合，一起完成Activity的管理工作
 * ApplicationThread，用来实现ActivityManagerService与ActivityThread之间的交互。在ActivityManagerService需要管理相关Application中的Activity的生命周期时，通过ApplicationThread的代理对象与ActivityThread通讯。
 * ApplicationThreadProxy，是ApplicationThread在服务器端的代理，负责和客户端的ApplicationThread通讯。AMS就是通过该代理与ActivityThread进行通信的。
-* Instrumentation，每一个应用程序只有一个Instrumentation对象，每个Activity内都有一个对该对象的引用。Instrumentation可以理解为应用进程的管家，ActivityThread要创建或暂停某个Activity时，都需要通过Instrumentation来进行具体的操作。
-* ActivityStack，Activity在AMS的栈管理，用来记录已经启动的Activity的先后关系，状态信息等。通过ActivityStack决定是否需要启动新的进程。
+* Instrumentation，每一个应用程序只有一个Instrumentation对象，每个Activity内都有一个对该对象的引用。`Instrumentation可以理解为应用进程的管家，ActivityThread要创建或暂停某个Activity时，都需要通过Instrumentation来进行具体的操作`。
+* ActivityStack，Activity在AMS的栈管理，用来`记录已经启动的Activity的先后关系，状态信息`等。通过ActivityStack决定是否需要启动新的进程。
 * ActivityRecord，ActivityStack的管理对象，每个Activity在AMS对应一个* ActivityRecord，来记录Activity的状态以及其他的管理信息。其实就是服务器端的Activity对象的映像。
 * TaskRecord，AMS抽象出来的一个“任务”的概念，是记录ActivityRecord的栈，一个“Task”包含若干个ActivityRecord。AMS用TaskRecord确保Activity启动和退出的顺序。如果你清楚Activity的4种launchMode，那么对这个概念应该不陌生。
 
@@ -25,7 +25,7 @@ zygote意为“受精卵“。Android是基于Linux系统的，而在Linux中，
 * 一个单独的dalvik虚拟机
 * 一个单独的进程
 
-所以当系统里面的第一个zygote进程运行之后，在这之后再开启App，就相当于开启一个新的进程。而为了实现资源共用和更快的启动速度，Android系统开启新进程的方式，是通过fork第一个zygote进程实现的。所以说，除了第一个zygote进程，其他应用所在的进程都是zygote的子进程，这下你明白为什么这个进程叫“受精卵”了吧？因为就像是一个受精卵一样，它能快速的分裂，并且产生遗传物质一样的细胞！
+所以当系统里面的第一个zygote进程运行之后，在这之后再开启App，就相当于开启一个新的进程。而为了实现资源共用和更快的启动速度，Android系统开启新进程的方式，是通过fork第一个zygote进程实现的。所以说，`除了第一个zygote进程，其他应用所在的进程都是zygote的子进程`，这下你明白为什么这个进程叫“受精卵”了吧？因为就像是一个受精卵一样，它能快速的分裂，并且产生遗传物质一样的细胞！
 
 **SystemServer是什么？有什么作用？它与zygote的关系是什么？**
 
@@ -33,7 +33,7 @@ zygote意为“受精卵“。Android是基于Linux系统的，而在Linux中，
 
 知道了SystemServer的本质，我们对它就不算太陌生了，这个进程是Android Framework里面两大非常重要的进程之一——另外一个进程就是上面的zygote进程。
 
-为什么说SystemServer非常重要呢？因为系统里面重要的服务都是在这个进程里面开启的，比如 
+为什么说SystemServer非常重要呢？因为`系统里面重要的服务都是在这个进程里面开启的`，比如 
 ActivityManagerService、PackageManagerService、WindowManagerService等等，看着是不是都挺眼熟的？
 
 那么这些系统服务是怎么开启起来的呢？
@@ -128,9 +128,9 @@ public static void main(String argv[]) {
 
 **ActivityManagerService是什么？什么时候初始化的？有什么作用？**
 
-ActivityManagerService，简称AMS，服务端对象，负责系统中所有Activity的生命周期。
+ActivityManagerService，简称AMS，服务端对象，负责系统中所有`Activity的生命周期`。
 
-ActivityManagerService进行初始化的时机很明确，就是在SystemServer进程开启的时候，就会初始化ActivityManagerService。从下面的代码中可以看到
+ActivityManagerService进行初始化的时机很明确，就是`在SystemServer进程开启的时候，就会初始化ActivityManagerService`。从下面的代码中可以看到
 
 ```
 public final class SystemServer {
@@ -154,7 +154,7 @@ public final class SystemServer {
         nativeInit();
 
         // 创建系统上下文
-        createSystemContext();
+       createSystemContext();
 
         //初始化SystemServiceManager对象，下面的系统服务开启都需要调用SystemServiceManager.startService(Class<T>)，这个方法通过反射来启动对应的服务
         mSystemServiceManager = new SystemServiceManager(mSystemContext);
@@ -183,9 +183,7 @@ public final class SystemServer {
 
     //在这里开启了几个核心的服务，因为这些服务之间相互依赖，所以都放在了这个方法里面。
     private void startBootstrapServices() {
-
         ...ignore some code...
-
         //初始化ActivityManagerService
         mActivityManagerService = mSystemServiceManager.startService(
                 ActivityManagerService.Lifecycle.class).getService();
@@ -215,7 +213,7 @@ public final class SystemServer {
 
 你是否会好奇，我为什么说AMS是服务端对象？下面我给你介绍下Android系统里面的服务器和客户端的概念。
 
-其实服务器客户端的概念不仅仅存在于Web开发中，在Android的框架设计中，使用的也是这一种模式。服务器端指的就是所有App共用的系统服务，比如我们这里提到的ActivityManagerService，和前面提到的PackageManagerService、WindowManagerService等等，这些基础的系统服务是被所有的App公用的，当某个App想实现某个操作的时候，要告诉这些系统服务，比如你想打开一个App，那么我们知道了包名和MainActivity类名之后就可以打开
+其实服务器客户端的概念不仅仅存在于Web开发中，在Android的框架设计中，使用的也是这一种模式。`服务器端指的就是所有App共用的系统服务`，比如我们这里提到的ActivityManagerService，和前面提到的PackageManagerService、WindowManagerService等等，这些基础的系统服务是被所有的App公用的，当某个App想实现某个操作的时候，要告诉这些系统服务，比如你想打开一个App，那么我们知道了包名和MainActivity类名之后就可以打开
 
 ```
 Intent intent = new Intent(Intent.ACTION_MAIN);  
@@ -225,7 +223,7 @@ intent.setComponent(cn);
 startActivity(intent); 
 ```
 
-但是，我们的App通过调用startActivity()并不能直接打开另外一个App，这个方法会通过一系列的调用，最后还是告诉AMS说：“我要打开这个App，我知道他的住址和名字，你帮我打开吧！”所以是AMS来通知zygote进程来fork一个新进程，来开启我们的目标App的。这就像是浏览器想要打开一个超链接一样，浏览器把网页地址发送给服务器，然后还是服务器把需要的资源文件发送给客户端的。
+但是，我们的App通过调用startActivity()并不能直接打开另外一个App，这个方法会通过一系列的调用，最后还是告诉AMS说：“我要打开这个App，我知道他的住址和名字，你帮我打开吧！”所以`是AMS来通知zygote进程来fork一个新进程，来开启我们的目标App的`。这就像是浏览器想要打开一个超链接一样，浏览器把网页地址发送给服务器，然后还是服务器把需要的资源文件发送给客户端的。
 
 知道了Android Framework的客户端服务器架构之后，我们还需要了解一件事情，那就是我们的App和AMS(SystemServer进程)还有zygote进程分属于三个独立的进程，他们之间如何通信呢？
 
@@ -500,7 +498,7 @@ intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 **Instrumentation是什么？和ActivityThread是什么关系？**
 
-还记得前面说过的Instrumentation对象吗？每个Activity都持有Instrumentation对象的一个引用，但是整个进程只会存在一个Instrumentation对象。当startActivityForResult()调用之后，实际上还是调用了mInstrumentation.execStartActivity()
+还记得前面说过的Instrumentation对象吗？每个Activity都持有Instrumentation对象的一个引用，但是整个进程只会存在一个Instrumentation对象。当startActivityForResult()调用之后，实际上还是调用了mInstrumentation.`execStartActivity`()
 
 ```
 public void startActivityForResult(Intent intent, int requestCode, @Nullable Bundle options) {
@@ -585,7 +583,7 @@ final void performCreate(Bundle icicle) {
 那么你可能要问了，老板是谁呀？ 
 老板当然是大名鼎鼎的ActivityThread了！
 
-ActivityThread你都没听说过？那你肯定听说过传说中的UI线程吧？是的，这就是UI线程。我们前面说过，App和AMS是通过Binder传递信息的，那么ActivityThread就是专门与AMS的外交工作的。
+ActivityThread你都没听说过？那你肯定听说过传说中的UI线程吧？是的，这就是UI线程。我们前面说过，App和AMS是通过Binder传递信息的，那么`ActivityThread就是专门与AMS的外交工作的`。
 
 AMS说：“ActivityThread，你给我暂停一个Activity！” 
 ActivityThread就说：“没问题！”然后转身和Instrumentation说：“老婆，AMS让暂停一个Activity，我这里忙着呢，你快去帮我把这事办了把~”
@@ -604,8 +602,7 @@ mInstrumentation.execStartActivity()
 但是到这里还没完呢！里面又调用了下面的方法
 
 ```
-ActivityManagerNative.getDefault()
-                .startActivity
+ActivityManagerNative.getDefault().startActivity
 ```
 
 

@@ -1,5 +1,7 @@
 # Android开机过程
+https://mp.weixin.qq.com/s/-tt3IMjIRUFvU-Xw8mjFtw
 
+http://blog.jobbole.com/67931/
 * BootLoder引导,然后加载Linux内核.
 * 0号进程init启动.加载init.rc配置文件,配置文件有个命令启动了zygote进程
 * zygote开始fork出SystemServer进程
